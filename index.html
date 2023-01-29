@@ -8,7 +8,18 @@
     <title>Etch-a-sketch</title>
   </head>
   <body>
+    <h1>Etch-a-sketch</h1>
     <div class="container">
+      <div class="options">
+        <div class="color_circle">
+          <input type="color" id="colorpicker" value="#000000" />
+        </div>
+        <button class="btn color_mode">Color Mode</button>
+        <button class="btn rubber">Rubber</button>
+        <button class="btn clear">Clear</button>
+        <label class="label" for="size">16x16</label>
+        <input type="range" min="1" max="5" step="1" id="size" />
+      </div>
       <div id="sketch_divs"></div>
     </div>
     <script src="./script/script.js"></script>
