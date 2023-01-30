@@ -1,14 +1,18 @@
 const containerForDivs = document.getElementById("sketch_divs");
 const colorPicker = document.querySelector("#colorpicker");
-let defaultColor = "#000000";
 const sizeSlider = document.querySelector("#size");
 const sizeSliderLabel = document.querySelector(".label");
+const optionsButtons = document.querySelectorAll(".options button");
+let defaultColor = "#000000";
+let rubberColor = "#ffffff";
+let paintingColor = defaultColor;
+let allDivs = containerForDivs.childNodes;
+let isDrawing = false;
 let defaultSize = "3";
 let boxWidth;
 let boxHeight;
 let numOfBox;
-let allDivs = containerForDivs.childNodes;
-let isDrawing = false;
+window.onload = makeDivs(defaultSize);
 
 function makeDivs(size) {
   switch (size) {
@@ -41,16 +45,16 @@ function makeDivs(size) {
 
   for (let i = 0; i < numOfBox; i++) {
     let oneDiv = document.createElement("div");
-    oneDiv.setAttribute("class", "simple_div");
+    oneDiv.classList.add("simple_div");
     oneDiv.style.cssText = `width: ${boxWidth}px; height: ${boxHeight}px`;
     containerForDivs.appendChild(oneDiv);
   }
+  allDivs.forEach((div) => div.addEventListener("mousedown", changeColor));
+  allDivs.forEach((div) => div.addEventListener("mousemove", changeColor));
+  allDivs.forEach((div) => div.addEventListener("mouseup", changeColor));
 }
 
-window.onload = makeDivs(defaultSize);
-
 function changeColor(e) {
-  console.log(isDrawing);
   switch (e.type) {
     case "mousedown":
       isDrawing = true;
@@ -58,51 +62,92 @@ function changeColor(e) {
     case "mouseup":
       isDrawing = false;
       break;
-    default:
-      isDrawing = false;
   }
 
   if (isDrawing) {
-    this.style.background = `${defaultColor}`;
+    this.style.background = `${paintingColor}`;
   }
 }
 
 function changeSizeOfBox(e) {
-  if (e.target.value === "1") {
-    sizeSliderLabel.textContent = "4x4";
-    defaultSize = "1";
-    console.log(defaultSize);
-    containerForDivs.innerHTML = "";
-    allDivs = "";
-    makeDivs(defaultSize);
-  } else if (e.target.value === "2") {
-    defaultSize = "2";
-    sizeSliderLabel.textContent = "8x8";
-    containerForDivs.innerHTML = "";
-    makeDivs(defaultSize);
-  } else if (e.target.value === "3") {
-    defaultSize = "3";
-    sizeSliderLabel.textContent = "16x16";
-    containerForDivs.innerHTML = "";
-    makeDivs(defaultSize);
-  } else if (e.target.value === "4") {
-    defaultSize = "4";
-    sizeSliderLabel.textContent = "32x32";
-    containerForDivs.innerHTML = "";
-    makeDivs(defaultSize);
-  } else if (e.target.value === "5") {
-    defaultSize = "5";
-    sizeSliderLabel.textContent = "64x64";
-    containerForDivs.innerHTML = "";
-    makeDivs(defaultSize);
+  switch (e.target.value) {
+    case "1":
+      defaultSize = "1";
+      containerForDivs.innerHTML = "";
+      makeDivs(defaultSize);
+      break;
+    case "2":
+      defaultSize = "2";
+      containerForDivs.innerHTML = "";
+      makeDivs(defaultSize);
+      break;
+    case "3":
+      defaultSize = "3";
+      containerForDivs.innerHTML = "";
+      makeDivs(defaultSize);
+      break;
+    case "4":
+      defaultSize = "4";
+      containerForDivs.innerHTML = "";
+      makeDivs(defaultSize);
+      break;
+    case "5":
+      defaultSize = "5";
+      containerForDivs.innerHTML = "";
+      makeDivs(defaultSize);
+      break;
   }
 }
 
-allDivs.forEach((div) => div.addEventListener("mousedown", changeColor));
-allDivs.forEach((div) => div.addEventListener("mousemove", changeColor));
-allDivs.forEach((div) => div.addEventListener("mouseup", changeColor));
-colorPicker.addEventListener("change", (e) => {
-  defaultColor = e.target.value;
-});
+function changeLabel(e) {
+  switch (e.target.value) {
+    case "1":
+      sizeSliderLabel.textContent = "4 x 4";
+      break;
+    case "2":
+      sizeSliderLabel.textContent = "8 x 8";
+      break;
+    case "3":
+      sizeSliderLabel.textContent = "16 x 16";
+      break;
+    case "4":
+      sizeSliderLabel.textContent = "32 x 32";
+      break;
+    case "5":
+      sizeSliderLabel.textContent = "64 x 64";
+      break;
+  }
+}
+
+function buttonsHandler(e) {
+  console.log(this.dataset);
+  switch (this.dataset.option) {
+    case "color":
+      optionsButtons.forEach((btn) => btn.classList.remove("active"));
+      this.classList.add("active");
+      paintingColor = defaultColor;
+      colorPicker.value = defaultColor;
+      break;
+    case "rubber":
+      optionsButtons.forEach((btn) => btn.classList.remove("active"));
+      this.classList.add("active");
+      paintingColor = rubberColor;
+      colorPicker.value = rubberColor;
+      break;
+    case "clear":
+      optionsButtons.forEach((btn) => btn.classList.remove("active"));
+      this.classList.add("active");
+      colorPicker.value = rubberColor;
+      allDivs.forEach((div) => (div.style.background = "#ffffff"));
+      break;
+  }
+}
+
 sizeSlider.addEventListener("change", changeSizeOfBox);
-sizeSlider.addEventListener("mousemove", changeSizeOfBox);
+colorPicker.addEventListener("change", (e) => {
+  paintingColor = e.target.value;
+  optionsButtons.forEach((btn) => btn.classList.remove("active"));
+  optionsButtons[0].classList.add("active");
+});
+sizeSlider.addEventListener("mousemove", changeLabel);
+optionsButtons.forEach((btn) => btn.addEventListener("click", buttonsHandler));
